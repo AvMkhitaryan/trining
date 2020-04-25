@@ -49,10 +49,10 @@ class Order
         return $result;
     }
 
-    public static function table(){
+    public static function table($tabelName,$start_from,$limit){
         $db = \application\components\Db::getConnection();
 
-        $select = $db->query("SELECT * FROM `category` ORDER BY `id` DESC");
+        $select = $db->query("SELECT * FROM $tabelName ORDER BY `id` DESC LIMIT `$start_from` , `$limit` ;");
         $category=$select->fetchAll(\PDO::FETCH_ASSOC);
         return $category;
     }
@@ -101,5 +101,24 @@ class Order
         $result=$select->fetchAll(\PDO::FETCH_ASSOC);
         return $result;
     }
+
+    public static function deleteCate($id){
+
+        $db = \application\components\Db::getConnection();
+
+        $sql = $db->prepare("DELETE FROM `category` WHERE `id`='$id'");
+        $sql->execute();
+
+    }
+
+    public static function DbCount($TableName){
+        $db = \application\components\Db::getConnection();
+
+        $nRows = $db->query("select count(*) from `$TableName`")->fetchColumn();
+
+        return $nRows;
+
+    }
+
 
 }

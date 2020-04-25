@@ -1,10 +1,12 @@
 <?php
+use application\models\Order;
+use application\components\Auth;
 
-$db = \application\components\Db::getConnection();
-$delID = $_POST["a"];
-if (isset($delID)){
-    echo "true";
+$delID="";
+if (!empty($_POST["a"])){
+    $delID=$_POST["a"];
 }
-
-$sql = $db->prepare("DELETE FROM `category` WHERE `id`='$delID'");
-$sql->execute();
+if (!empty($delID)){
+    Order::deleteCate($delID);
+    Auth::goCategoryPage();
+}

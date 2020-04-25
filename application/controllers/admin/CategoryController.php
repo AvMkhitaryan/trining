@@ -42,6 +42,11 @@ class CategoryController extends AdminBaseController
         $this->view->setTitle('home');
         $this->view->render('admin/category/create',[]);
 
+        if (!empty($_POST)&& $_POST["click"]){
+            Order::tableCreateCategory($_POST["name"]);
+            Auth::goCategoryPage();
+        }
+
         return true;
     }
 
@@ -50,12 +55,13 @@ class CategoryController extends AdminBaseController
 
         $val=\application\models\Order::tableUpdate($id);
 
+        $_SESSION["updateID"]=$id;
+        $_POST["id"]=$id;
         $this->view->setTitle('home');
         $this->view->render('admin/category/update', ['id' => $id]);
         if (!empty($_POST) && !empty($_POST["submit"])){
-            echo "<pre>";
-            var_dump($_POST);
-            echo "</pre>";
+            Order::tableUpdateInsert($_POST["edit"],$id);
+            Auth::goCategoryPage();
         }
 
         return true;
@@ -63,9 +69,15 @@ class CategoryController extends AdminBaseController
 
     public function actionDelete($id)
     {
-        $this->view->setTitle('home');
-        header("Location: /admin/category");
 
-        return true;
+//        $db = \application\components\Db::getConnection();
+//
+//        $sql = $db->prepare("DELETE FROM `category` WHERE `id`='$id'");
+//        $sql->execute();
+//
+//        $this->view->setTitle('home');
+//        header("Location: /admin/category");
+//
+//        return true;
     }
 }

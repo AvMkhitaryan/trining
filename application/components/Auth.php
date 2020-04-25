@@ -104,5 +104,10 @@ class Auth
         header("Location: /admin/category");
     }
 
+    public static function goProductPage()
+    {
+        header("Location: /admin/product");
+    }
+
 
 }

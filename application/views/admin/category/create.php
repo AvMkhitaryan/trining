@@ -21,9 +21,9 @@
     </div>
 </div>
 <?php
-if (!empty($_POST["click"])&& !empty($_POST["name"])){
-    \application\models\Order::tableCreateCategory($_POST["name"]);
-    \application\components\Auth::goCategoryPage();
-}
+//if (!empty($_POST["click"])&& !empty($_POST["name"])){
+//    \application\models\Order::tableCreateCategory($_POST["name"]);
+//    \application\components\Auth::goCategoryPage();
+//}
 
 ?>

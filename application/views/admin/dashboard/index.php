@@ -6,7 +6,7 @@
                 <a href="/admin/category"  class="btn btn-success">Category</a>
                 </div>
                 <div>
-                <a href="#" class="btn btn-success">Product</a>
+                <a href="/admin/product" class="btn btn-success">Product</a>
                 </div>
             </div>
             <div class="col-10">

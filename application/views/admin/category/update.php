@@ -5,7 +5,14 @@
  * Date: 11.04.2020
  * Time: 19:38
  */echo "admin category udpate <br>";
+ echo "<pre>";
+var_dump($_POST["id"]);
 
+$id=$_SESSION["updateID"];
+
+$val=\application\models\Order::tableUpdate($id);
+
+unset($_SESSION["updateID"]);
 ?>
 <div class="container">
     <div class="row">
