@@ -1,6 +1,7 @@
 <?php
 use application\models\Product;
-$name=Product::CreteDbSelect();
+//$name=Product::CreteDbSelect();
+
 ?>
 <div class="container-fluid">
     <div class="row">
@@ -9,12 +10,12 @@ $name=Product::CreteDbSelect();
         </div>
         <div class="col-4">
             <div>
-                <form action="" method="POST">
+                <form action="" method="POST" enctype='multipart/form-data'>
                 <label for="category">Category
                     <select name="category" id="category">
                         <option selected="selected">----</option>
                         <?php
-                        foreach ($name as $value) {
+                        foreach ($data[0] as $value) {
                             ?>
                             <option value="<?= $value["id"]; ?>"><?= $value["name"]; ?></option>
                             <?php
@@ -34,6 +35,10 @@ $name=Product::CreteDbSelect();
                         </select>
                     </label>
                     <br>
+                    <label for="image">Image
+                        <input type="file" id="image" name="image">
+                    </label>
+                    <br>
                     <label for="text">Desc Info
                         <textarea class="form-control" id="text" rows="3" name="text"></textarea>
                     </label>
@@ -42,17 +47,21 @@ $name=Product::CreteDbSelect();
                         <input type="text" id="price" name="price">
                     </label>
                     <br>
+                    <label for="quantity">Quantity
+                        <input type="text" id="quantity" name="quantity">
+                    </label>
+                    <br>
                     <input type="submit" name="CrButton" value="Create" class="btn btn-success">
                     <a href="/admin/product" class="btn btn-success">GO back</a>
                 </form>
             </div>
         </div>
         <div class="col-4">
-<?php //$V=Product::insertInDb($_POST["category"],$_POST["category"],$_POST["category"]);
-//echo "<pre>";
-//    var_dump($_POST);
-//    echo "</pre>";
-//?>
+<?php
+if (!empty($_FILES)){
+    $_POST["img_name"]=$_FILES["image"]["name"];
+}
+?>
         </div>
     </div>
 </div>

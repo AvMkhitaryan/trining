@@ -1,4 +1,3 @@
-
 <div class="d-flex justify-content-center">
     <div>
         <h3>ADMIN Login </h3>
@@ -23,5 +22,9 @@
                 <a href="#" class="btn btn-success">Confirm password ?</a>
             </div>
         </form>
+        <?php if (!empty($_SESSION["AdminLoginPage"])){
+            echo $_SESSION["AdminLoginPage"];
+            unset($_SESSION["AdminLoginPage"]);
+        } ?>
     </div>
 </div>

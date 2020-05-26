@@ -62,8 +62,8 @@ class AdminForm
             if ($this->isTrueUser()==true){
                 if ($dbInfo[0]["User_level"]=='admin'){
 
-                    $_SESSION['user']['id']=$dbInfo[0]["id"];
-                    $_SESSION['user']['role']=$dbInfo[0]["User_level"];
+                    $_SESSION['userId'] = $dbInfo[0]["id"];
+                    $_SESSION['userRole'] = $dbInfo[0]["User_level"];
 
                     return true;
 

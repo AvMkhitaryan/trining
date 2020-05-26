@@ -7,7 +7,7 @@ use application\models\Order;
 
 class Pagination
 {
-    private $max = 5;
+    private $max;
     private $total;
     private $current_page;
     private $notes_on_page;
@@ -16,79 +16,83 @@ class Pagination
     private $get;
     private $table;
 
-    public function __construct($table,$path)
+    public function __construct($table, $path, $max)
     {
         $this->path = $path;
-//        $this->total = $total;
-//        $this->current_page = $current_page;
-//        $this->notes_on_page = $notes_on_page;
-//        $this->count = $this->countOfPages();
-        $this->table=$table;
-//        $this->table=$get;
+        $this->table = $table;
+        $this->max = $max;
     }
 
-    public function count(){
-        $c=Order::DbCount($this->table);
-        $this->count=$c;
+    public function count()
+    {
+        $c = Order::DbCount($this->table);
+        $this->count = $c;
 
         return $c;
     }
-    public function get(){
-        if (!empty($_GET)){
+
+    public function get()
+    {
+        if (!empty($_GET)) {
             return $_GET['page'];
         }
     }
 
-    public function numberOfStrange(){
-        if (!empty($this->count())){
-            $strong=$this->count();
+    public function numberOfStrange()
+    {
+        if (!empty($this->count())) {
+            $strong = $this->count();
 
-            $count= ceil($strong/$this->max);
+            $count = ceil($strong / $this->max);
 
-            if ($count>1){
+            if ($count > 1) {
                 return $count;
-            }else{
+            } else {
                 return 1;
             }
         }
     }
-    public function Buttons(){
-        if (!empty($this->get())){
+
+    public function Buttons()
+    {
+        if (!empty($this->get())) {
             return $this->get();
-        }else{
+        } else {
             return 1;
         }
     }
-    public function ThreeButtonsPage(){
-        $pageNum=$this->Buttons();
-        $pageCount=$this->numberOfStrange();
-        $ForStart="";
-        $maxFor="";
-        if ($pageNum==1){
-            $ForStart=1;
-            $maxFor=$ForStart+1;
+
+    public function ThreeButtonsPage()
+    {
+        $pageNum = $this->Buttons();
+        $pageCount = $this->numberOfStrange();
+        $ForStart = "";
+        $maxFor = "";
+        if ($pageNum == 1) {
+            $ForStart = 1;
+            $maxFor = $ForStart + 1;
         }
 
-        if ($pageNum>1&&$pageNum<$pageCount){
+        if ($pageNum > 1 && $pageNum < $pageCount) {
 
-            $ForStart=$pageNum-1;
-            $maxFor=$ForStart+2;
+            $ForStart = $pageNum - 1;
+            $maxFor = $ForStart + 2;
 
         }
 
-        if ($pageNum>1&&$pageNum==$pageCount){
-            if ($pageNum>2){
-                $ForStart=$pageNum-2;
-                $maxFor=$ForStart+2;
+        if ($pageNum > 1 && $pageNum == $pageCount) {
+            if ($pageNum > 2) {
+                $ForStart = $pageNum - 2;
+                $maxFor = $ForStart + 2;
 
-            }else{
-                $ForStart=$pageNum-1;
-                $maxFor=$ForStart+1;
+            } else {
+                $ForStart = $pageNum - 1;
+                $maxFor = $ForStart + 1;
 
             }
         }
-        for ($i=$ForStart;$i<=$maxFor;$i++){
-            echo "<a href=\"$this->path?page=$i\" class='btn btn-outline-dark'>".$i."</a>";
+        for ($i = $ForStart; $i <= $maxFor; $i++) {
+            echo "<a href=\"$this->path?page=$i\" class='btn btn-outline-dark'>" . $i . "</a>";
         }
 //        if ($pageNum=1){
 //            echo $MAxButton=$pageNum+2;
@@ -126,65 +130,72 @@ class Pagination
     }
 
 
-    public function BigPrev(){
-        if (!empty($this->numberOfStrange())&&$this->numberOfStrange()>1){
+    public function BigPrev()
+    {
+        if (!empty($this->numberOfStrange()) && $this->numberOfStrange() > 1) {
             return "<a href=\"$this->path?page=1\" class='btn btn-outline-dark'><i class=\"fa fa-backward\" aria-hidden=\"true\"></i></a>";
-        }else{
+        } else {
             return "BIG prev else";
         }
     }
 
-    public function BigNext(){
-        if (!empty($this->numberOfStrange())&&$this->numberOfStrange()>1){
-            $beforeNext=$this->numberOfStrange();
-            return "<a href=\"$this->path"."?page=$beforeNext\" class='btn btn-outline-dark'><i class=\"fa fa-forward\" aria-hidden=\"true\"></i></a>";
-        }else{
+    public function BigNext()
+    {
+        if (!empty($this->numberOfStrange()) && $this->numberOfStrange() > 1) {
+            $beforeNext = $this->numberOfStrange();
+            return "<a href=\"$this->path" . "?page=$beforeNext\" class='btn btn-outline-dark'><i class=\"fa fa-forward\" aria-hidden=\"true\"></i></a>";
+        } else {
             return "BIG NEXT else";
         }
     }
 
-    public function OnePrev(){
-        if (!empty($this->numberOfStrange())&&$this->numberOfStrange()>1){
-            $pageNum=$this->Buttons();
-            $pageCount=$this->numberOfStrange();
-            if ($pageNum==1){
-                $ButtonNumber=$this->Buttons();
-            }else{
-                $ButtonNumber=$this->Buttons()-1;
+    public function OnePrev()
+    {
+        if (!empty($this->numberOfStrange()) && $this->numberOfStrange() > 1) {
+            $pageNum = $this->Buttons();
+            $pageCount = $this->numberOfStrange();
+            if ($pageNum == 1) {
+                $ButtonNumber = $this->Buttons();
+            } else {
+                $ButtonNumber = $this->Buttons() - 1;
             }
-            return "<a href=\"$this->path"."?page=$ButtonNumber\" class='btn btn-outline-dark'><i class=\"fa fa-caret-left\" aria-hidden=\"true\"></i></a>";
-        }else{
+            return "<a href=\"$this->path" . "?page=$ButtonNumber\" class='btn btn-outline-dark'><i class=\"fa fa-caret-left\" aria-hidden=\"true\"></i></a>";
+        } else {
             return "Ore prev else";
         }
     }
 
-    public function OneNext(){
-        if (!empty($this->numberOfStrange())&&$this->numberOfStrange()>1){
-            $pageNum=$this->Buttons();
-            $pageCount=$this->numberOfStrange();
-            if ($pageNum==$pageCount){
-                $ButtonNumber=$this->Buttons();
-            }else{
-                $ButtonNumber=$this->Buttons()+1;
+    public function OneNext()
+    {
+        if (!empty($this->numberOfStrange()) && $this->numberOfStrange() > 1) {
+            $pageNum = $this->Buttons();
+            $pageCount = $this->numberOfStrange();
+            if ($pageNum == $pageCount) {
+                $ButtonNumber = $this->Buttons();
+            } else {
+                $ButtonNumber = $this->Buttons() + 1;
             }
-            return "<a href=\"$this->path"."?page=$ButtonNumber\" class='btn btn-outline-dark'><i class=\"fa fa-caret-right\" aria-hidden=\"true\"></i></a>";
-        }else{
+            return "<a href=\"$this->path" . "?page=$ButtonNumber\" class='btn btn-outline-dark'><i class=\"fa fa-caret-right\" aria-hidden=\"true\"></i></a>";
+        } else {
             return "Ore NEXT else";
         }
     }
-    public function PaginationTrue(){
-        if (!empty($this->count())){
-            if ($this->count()>$this->max){
+
+    public function PaginationTrue()
+    {
+        if (!empty($this->count())) {
+            if ($this->count() > $this->max) {
                 return true;
             }
         }
     }
 
-    public function PagCount(){
-        if (!empty($this->PaginationTrue())){
-            if ($this->PaginationTrue()==true){
-                $pg=$this->get();
-                $countPG=$this->numberOfStrange();
+    public function PagCount()
+    {
+        if (!empty($this->PaginationTrue())) {
+            if ($this->PaginationTrue() == true) {
+                $pg = $this->get();
+                $countPG = $this->numberOfStrange();
                 echo "<div style='font-size: 20px;' class='d-flex justify-content-center'>Page $pg OF $countPG</div>";
             }
         }

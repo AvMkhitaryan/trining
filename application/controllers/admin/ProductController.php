@@ -12,43 +12,92 @@ use application\base\AdminBaseController;
 use application\components\Auth;
 use application\components\Db;
 use application\models\Product;
+use application\components\Upload;
 
 class ProductController extends AdminBaseController
 {
-    public function actionIndex(){
+    public function actionIndex()
+    {
+        if (!Auth::checkLogged()) {
+
+            $_SESSION["AdminLoginPage"] = "Please Login";
+            Auth::redirect("/admin/login");
+        }
+        if (!Auth::isAdmin()) {
+            $_SESSION["AdminLoginPage"] = "Sorry Your User Levels is not Admin";
+            Auth::redirect("/admin/login");
+        }
+        $dat=Product::Sel();
         $this->view->setTitle('home');
-        $this->view->render('admin/product/index', []);
+        $this->view->render('admin/product/index', [$dat]);
 
         return true;
     }
 
-    public function actionCreate(){
-
-        $this->view->setTitle('home');
-        $this->view->render('admin/product/create',[]);
-
-        if (!empty($_POST)&& !empty($_POST["CrButton"])){
-            Product::CategoryInDb($_POST["NewProduct"],$_POST["category"],$_POST["new"],$_POST["text"],$_POST["price"]);
+    public function actionCreate()
+    {
+        if (!Auth::checkLogged()) {
+            $_SESSION["AdminLoginPage"] = "Please Login";
+            Auth::redirect("/admin/login");
+        }
+        if (!Auth::isAdmin()) {
+            $_SESSION["AdminLoginPage"] = "Sorry Your User Levels is not Admin";
+            Auth::redirect("/admin/login");
         }
 
-    }
+        if (!empty($_POST) && !empty($_POST["CrButton"])) {
 
-    public function actionUpdate($id){
+            Product::Create($_POST["NewProduct"], $_POST["category"], $_POST["new"], $_POST["text"], $_FILES["image"]["name"], $_POST["price"], $_POST["quantity"]);
 
-        $_POST["id"]=$id;
-        $this->view->render('admin/product/update', ['id' => $id]);
-
-        if (!empty($_POST)&& !empty($_POST["UpButton"])){
-            Product::UpdateInsertProduct($_POST["NewProduct"],$_POST["category"],$_POST["new"],$_POST["text"],$_POST["price"],$_POST["id"]);
-            Auth::goProductPage();
+            if (!empty($_FILES) && $_FILES["image"]["error"] == UPLOAD_ERR_OK) {
+                Upload::Insert("uploads", $_FILES);
+                Auth::redirect("/admin/product");
+            }
+            Auth::redirect("/admin/product");
         }
+        $dat=Product::Select();
+        $this->view->setTitle('Create');
+        $this->view->render('admin/product/create', [$dat]);
+        return true;
     }
 
-    public function actionDelete(){
+    public function actionUpdate($id)
+    {
+        if (!Auth::checkLogged()) {
+            $_SESSION["AdminLoginPage"] = "Please Login";
+            Auth::redirect("/admin/login");
+        }
+        if (!Auth::isAdmin()) {
+            $_SESSION["AdminLoginPage"] = "Sorry Your User Levels is not Admin";
+            Auth::redirect("/admin/login");
+        }
 
-        $DelId=$_POST["DeleteId"];
+        $oldVal=Product::Select();
+        $chekitSelect = Product::updateProductPrint($id);
+        $this->view->setTitle('Update');
+        $this->view->render('admin/product/update', ['id' => $id,$oldVal,$chekitSelect]);
+
+        if (!empty($_POST) && !empty($_POST["UpButton"])) {
+            Product::Update($_POST["NewProduct"], $_POST["category"], $_POST["new"], $_POST["text"], $_POST["img_path"], $_POST["price"], $_POST["id"], $_POST["Quantity"]);
+            if (!empty($_FILES) && $_FILES["image"]["error"] == UPLOAD_ERR_OK) {
+                Upload::Insert("uploads", $_FILES);
+                Auth::redirect("/admin/product");
+            }
+            Auth::redirect("/admin/product");
+        }
+        return true;
+    }
+
+    public function actionDelete()
+    {
+
+        $DelId = $_POST["DeleteId"];
+
         Product::DeleteInProduct($DelId);
-        echo json_encode(1);
+
+        echo json_encode(1, 200);
+
+        die;
 
     }
 

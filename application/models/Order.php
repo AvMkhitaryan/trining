@@ -112,6 +112,7 @@ class Order
     }
 
     public static function DbCount($TableName){
+
         $db = \application\components\Db::getConnection();
 
         $nRows = $db->query("select count(*) from `$TableName`")->fetchColumn();

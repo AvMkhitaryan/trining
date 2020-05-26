@@ -11,25 +11,22 @@ namespace application\controllers\admin;
 
 use application\base\AdminBaseController;
 use application\components\Auth;
-
+use application\components\Db;
 use application\models\AdminForm;
 use application\models\LoginForm;
-
+use application\models\Product;
 class DashboardController extends AdminBaseController
 {
     public function actionIndex()
     {
-        if (Auth::checkLogged()=="true") {
-            $this->view->render('admin/dashboard/index', []);
-
-        }else{
+        if (Auth::checkLogged()!==true) {
             header("Location: /admin/login");
         }
-//        if (Auth::isAdmin()==true) {
-//            header("Location: /admin");
-//        }else{
-//            header("Location: /admin/login");
-//        }
+
+        if (Auth::isAdmin()!==true) {
+            $this->view->render('admin/dashboard/index', []);
+        }
+
         $this->view->setTitle('home');
         $this->view->render('admin/dashboard/index', []);
 
@@ -40,21 +37,99 @@ class DashboardController extends AdminBaseController
     {
         if (!empty($_POST)&& !empty($_POST["submit"])){
             $info=new AdminForm($_POST);
-//            echo "<pre>";
-//            var_dump($info->CreteAdminSession());
-//            echo "</pre>";
             if ($info->InfoInDb()==true){
-                Auth::goAdminPage();
-
+                Auth::redirect("/admin");
             }else{
-                echo "false";
+                $_SESSION["AdminLoginPage"]="HOOPS You have Note Admin";
+                Auth::redirect("admin/dashboard/login");
             }
         }
-
         $this->view->setTitle('home');
         $this->view->render('admin/dashboard/login', []);
 
         return true;
+    }
+
+    public function actionLogout(){
+
+
+        if (!empty($_POST) && !empty($_POST["exit"])){
+            Auth::logout();
+        echo json_encode(1,200);
+        die();
+        }
+    }
+
+    public function actionSearch(){
+//        echo json_encode(1,200);
+//        die();
+        if (!empty($_POST)){
+
+            if ($_POST["TableName"]=="product"){
+
+                $value=$_POST["InputVal"];
+                $db = \application\components\Db::getConnection();
+                $select = $db->query("SELECT `prod`.*, `cat`.`name` AS `cat_name`
+                FROM `product` AS `prod`
+                        LEFT JOIN `category` AS `cat`
+                                ON `prod`.`category_id` = `cat`.`id` WHERE `prod`.`name` LIKE '%$value%' ORDER BY `id` DESC ");
+                $result=$select->fetchAll(\PDO::FETCH_ASSOC);
+
+                echo json_encode($result,200);
+                die();
+            }
+
+            if ($_POST["TableName"]=="category"){
+                $value=$_POST["InputVal"];
+
+                $db = \application\components\Db::getConnection();
+
+                $select = $db->query("SELECT * FROM `category` WHERE `name` LIKE '%$value%' ORDER BY `id` DESC ;");
+                $category=$select->fetchAll(\PDO::FETCH_ASSOC);
+
+                echo json_encode($category,200);
+                die();
+
+            }
+
+        }
+    }
+
+    public function actionPrtab(){
+        if (!empty($_POST)){
+
+            if ($_POST["tableName"]=="product"){
+                $start=$_POST["start"];
+                $start=($start-1)*5;
+                $db = \application\components\Db::getConnection();
+                $select = $db->query("SELECT `prod`.*, `cat`.`name` AS `cat_name`
+                FROM `product` AS `prod`
+                        LEFT JOIN `category` AS `cat`
+                                ON `prod`.`category_id` = `cat`.`id` ORDER BY `id` DESC LIMIT 1000 OFFSET $start");
+                $result=$select->fetchAll(\PDO::FETCH_ASSOC);
+
+                echo json_encode($result,200);
+                die();
+            }
+
+            if ($_POST["tableName"]=="category"){
+
+
+                $start=$_POST["start"];
+                $start=($start-1)*5;
+
+                $db = \application\components\Db::getConnection();
+
+                $select = $db->query("SELECT * FROM `category` ORDER BY `id` DESC LIMIT 1000 OFFSET $start ;");
+                $category=$select->fetchAll(\PDO::FETCH_ASSOC);
+
+                echo json_encode($category,200);
+                die();
+
+            }
+
+        }
+
     }
 }
 

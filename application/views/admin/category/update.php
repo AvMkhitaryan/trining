@@ -1,27 +1,33 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Артур
- * Date: 11.04.2020
- * Time: 19:38
- */echo "admin category udpate <br>";
- echo "<pre>";
-var_dump($_POST["id"]);
 
-$id=$_SESSION["updateID"];
-
-$val=\application\models\Order::tableUpdate($id);
-
-unset($_SESSION["updateID"]);
+//$id=$_SESSION["updateID"];
+//
+//$val=\application\models\Order::tableUpdate($id);
+//
+//unset($_SESSION["updateID"]);
+//if (!empty($data)){
+//    echo "<pre>";
+//    var_dump($data[0][0]["name"]);
+//    echo "</pre>";
+//}
 ?>
 <div class="container">
     <div class="row">
-        <div class="d-flex justify-content-center">
-        <form action="" method="post">
-            <input type="text" name="edit" value="<?=$val[0]["name"]; ?>">
-            <input type="submit" name="submit" value="Edit" class="btn btn-success">
-            <a href="/admin/category" class="btn btn-success">go Back</a>
-        </form>
+        <div class="col-3">
+
+        </div>
+        <div class="col-6">
+            <div class="d-flex justify-content-center" style="margin-top: 80px;margin-bottom: 80px">
+                <form action="" method="post">
+                    <input type="text" name="edit" value="<?=$data[0][0]["name"]; ?>">
+                    <input type="submit" name="submit" value="Edit" class="btn btn-success">
+                    <a href="/admin/category" class="btn btn-success">go Back</a>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-3">
+
         </div>
     </div>
 </div>

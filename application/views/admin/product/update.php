@@ -1,17 +1,8 @@
 <?php
+
 use application\models\Product;
-$name=Product::CreteDbSelect();
-//if (!empty($_POST)){
-//    echo "<pre>";
-//    var_dump($_POST);
-//    echo "</pre>";
-//}
-$v=Product::updateProductPrint($_POST["id"]);
-
-//echo "<pre>";
-//    var_dump($v);
-//    echo "</pre>";
-
+$name=$data[0];
+$v=$data[1];
 ?>
 <div class="container-fluid">
     <div class="row">
@@ -19,15 +10,16 @@ $v=Product::updateProductPrint($_POST["id"]);
 
         </div>
         <div class="col-4">
-            <h3>Product Pudate</h3>
-            <form action="" method="POST">
+            <h3>Product Update</h3>
+            <form action="" method="POST" enctype='multipart/form-data'>
                 <label for="category">Category
                     <select name="category" id="category">
-                        <option>----</option>
                         <?php
                         foreach ($name as $value) {
                             ?>
-                            <option <?php if($value["id"]==$v[0]["category_id"]){echo 'selected="selected"';} ?> value="<?= $value["id"]; ?>"><?= $value["name"]; ?></option>
+                            <option  <?php if ($value["id"] == $data[1][0]["category_id"]) {
+                                echo 'selected="selected"';
+                            } ?> value="<?= $value["id"]; ?>"><?= $value["name"]; ?></option>
                             <?php
                         }
                         ?>
@@ -44,13 +36,26 @@ $v=Product::updateProductPrint($_POST["id"]);
                         <option value="notNew">Not New</option>
                     </select>
                 </label>
+                <label for="img">
+                    <input type="file" name="image" value="<?= $v[0]["img_path"]; ?>">
+                </label>
                 <br>
-                <label for="text">Desc Info
-                    <input type="text" id="text" name="text" value="<?= $v[0]["desc_info"]; ?>">
+                <h6>If You have new photo,<br> uploads photo,<br>   and this photo is delete</h6>
+                <div class="col-xl-3" style="display: block">
+                    <div class="container">
+                        <img src="../../../uploads/<?= $v[0]["img_path"]; ?>" alt="Avatar" class="image" style="width:200px">
+                    </div>
+                </div>
+                <label for="text">Desc Info<br>
+                    <textarea type="text" id="text" name="text"><?= $v[0]["desc_info"]; ?></textarea>
                 </label>
                 <br>
                 <label for="price">Price
                     <input type="text" id="price" name="price" value="<?= $v[0]["price"]; ?>">
+                </label>
+                <br>
+                <label for="Quantity">Quantity
+                    <input type="text" id="Quantity" name="Quantity" value="<?= $v[0]["quantity"]; ?>">
                 </label>
                 <br>
                 <input type="submit" name="UpButton" value="Create" class="btn btn-success">
@@ -62,3 +67,11 @@ $v=Product::updateProductPrint($_POST["id"]);
         </div>
     </div>
 </div>
+<?php
+if (!empty($_POST) && !empty($_POST["UpButton"]))
+    if (!empty($_FILES["image"]["name"])) {
+        $_POST["img_path"] = $_FILES["image"]["name"];
+    } else {
+        $_POST["img_path"] = $img;
+    }
+?>

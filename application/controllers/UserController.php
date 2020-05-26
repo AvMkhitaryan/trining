@@ -20,21 +20,11 @@ class UserController extends BaseController
     {
         if (!empty($_POST) && isset($_POST['click'])) {
             $model = new SignupForm($_POST);
-//            echo "<pre>";
-//            var_dump($model->insert());
-//            echo "</pre>";
 
             if ($model->insert()==true){
-                Auth::goLoginPage();
+                $_SESSION["regisTrue"]="Thanks for your registration";
+                Auth::redirect("/user/login");
             }
-
-//            $validate = $model->validate();
-//            if (!empty($validate)) {
-//                $this->view->render('user/register',$validate);
-//            }
-//            if ($model->register()) {
-//                Auth::goLoginPage();
-//            }
         }
         $this->view->render('user/register',[]);
 
@@ -45,21 +35,10 @@ class UserController extends BaseController
     {
         if (!empty($_POST) && isset($_POST['submit'])){
                 $model = new LoginForm($_POST);
-
             if ($model->comparisonUser()==true){
-//                  $this->view->render('user/login',[]);
-                Auth::goHome();
-            }else{
-                $this->view->render('user/login',[]);
+                Auth::redirect("/");
             }
-//            if (!empty($val['error'])) {
-//                $this->view->render('user/login',$val['error']);
-//            }
-//            $this->view->render('user/login',[]);
-//            Auth::goHome();
-//            if ($model->login()) {
-//                Auth::goHome();
-//            }
+
         }
         $this->view->render('user/login',[]);
 

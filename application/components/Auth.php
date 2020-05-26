@@ -25,30 +25,29 @@ class Auth
 
     public static function checkLogged()
     {
-        if (!empty($_SESSION['user']['id']) && !empty($_SESSION['user']['role'])){
-            return "true";
+        if (!empty($_SESSION['userId']) && !empty($_SESSION['userRole'])){
+            return true;
         }else{
-            return 'false';
-
+            return false;
         }
-
     }
 
     public static function isAdmin()
     {
-        if (!empty($_SESSION['user']['role'])){
-            if ($_SESSION['user']['role']=="admin"){
+        if (!empty($_SESSION['userId'])){
+            if ($_SESSION['userRole']=="admin"){
                 return true;
             }else{
                 return false;
             }
         }
+        return false;
     }
 
     public static function setSession($id, $role)
     {
-        $_SESSION['user']['id'] = $id;
-        $_SESSION['user']['role'] = $role;
+        $_SESSION['userId'] = $id;
+        $_SESSION['userRole'] = $role;
     }
 
     public static function setCookie($user_name,$cookie_key)
@@ -66,12 +65,13 @@ class Auth
 
     public static function logout()
     {
-        $user_name=$_COOKIE["user"];
+
+        $user_name=$_COOKIE["user_id"];
         $cookie_key=$_COOKIE["cook_key"];
 
-        Order::cookieInDib($user_name,"null");
+//        Order::cookieInDib($user_name,"null");
 
-        setcookie('user', $user_name, time() - 3600, '/');
+        setcookie('user_id', $user_name, time() - 3600, '/');
         setcookie('cook_key', $cookie_key, time() - 3600, '/');
 
         session_unset();
@@ -109,5 +109,9 @@ class Auth
         header("Location: /admin/product");
     }
 
+    public static function redirect($url)
+    {
+        header("Location: ".$url);
+    }
 
 }

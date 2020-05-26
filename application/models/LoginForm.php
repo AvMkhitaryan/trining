@@ -41,15 +41,11 @@ class LoginForm
                 }else{
                     Auth::goLoginPage();
                     $_SESSION["LoginErrors"]="Invalid password";
-                    return "false Tue";
                 }
             }else{
                 Auth::goLoginPage();
                 $_SESSION["LoginErrors"]="Invalid Email";
-                return "false one";
             }
-        }else{
-            return "false ziiro";
         }
     }
 
@@ -66,11 +62,15 @@ class LoginForm
         $hPass=$this->HashPass();
 
         if ($dbInfo[0]["password"]==$hPass){
-            return "true";
+
+            $_SESSION['userId'] = $dbInfo[0]["id"];
+            $_SESSION['userRole'] = $dbInfo[0]["User_level"];
+
+            return true;
         }else{
             Auth::goLoginPage();
             $_SESSION["LoginErrors"]="Sxal Password";
-            return "false";
+            return false;
         }
     }
 
@@ -79,14 +79,10 @@ class LoginForm
        $compUser= $this->comparisonUser();
        $dbInfo=$this->validate();
        $cookie_vale=User::generateAuthKey();
-
-       if ($compUser=="true"){
-
-           Auth::setSession($dbInfo[0]["id"],$dbInfo[0]["User_level"]);
-
+       if ($compUser==true){
            if ($this->rememberMe=="on"){
-               Auth::setCookie($dbInfo[0]['id'],$cookie_vale);
-               Order::cookieInDib($dbInfo[0]['id'],$cookie_vale);
+               setcookie('user_id',$dbInfo[0]['id'],time()+(60*60),"/");
+               setcookie('cook_key',$cookie_vale,time()+(60*60),"/");
            }
        }else{
            Auth::goLoginPage();

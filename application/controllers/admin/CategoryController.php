@@ -12,6 +12,7 @@ use application\base\AdminBaseController;
 use application\components\Auth;
 use application\components\Message;
 use application\models\Order;
+use application\models\Category;
 
 
 class CategoryController extends AdminBaseController
@@ -23,6 +24,15 @@ class CategoryController extends AdminBaseController
 
     public function actionIndex()
     {
+        if (!Auth::checkLogged()){
+            $_SESSION["AdminLoginPage"]="Please Login";
+            Auth::redirect("/admin/login");
+        }
+        if (!Auth::isAdmin()){
+            $_SESSION["AdminLoginPage"]="Sorry Your User Levels is not Admin";
+            Auth::redirect("/admin/login");
+        }
+
         $this->view->setTitle('home');
         $this->view->render('admin/category/index', []);
 
@@ -31,6 +41,14 @@ class CategoryController extends AdminBaseController
 
     public function actionView($id)
     {
+        if (!Auth::checkLogged()){
+            $_SESSION["AdminLoginPage"]="Please Login";
+            Auth::redirect("/admin/login");
+        }
+        if (!Auth::isAdmin()){
+            $_SESSION["AdminLoginPage"]="Sorry Your User Levels is not Admin";
+            Auth::redirect("/admin/login");
+        }
         $this->view->setTitle('home');
         $this->view->render('admin/category/view', ['id' => $id]);
 
@@ -39,45 +57,61 @@ class CategoryController extends AdminBaseController
 
     public function actionCreate()
     {
-        $this->view->setTitle('home');
-        $this->view->render('admin/category/create',[]);
+        if (!Auth::checkLogged()){
+            $_SESSION["AdminLoginPage"]="Please Login";
+            Auth::redirect("/admin/login");
+        }
+        if (!Auth::isAdmin()){
+            $_SESSION["AdminLoginPage"]="Sorry Your User Levels is not Admin";
+            Auth::redirect("/admin/login");
+        }
+
 
         if (!empty($_POST)&& $_POST["click"]){
-            Order::tableCreateCategory($_POST["name"]);
-            Auth::goCategoryPage();
+
+            Category::Create($_POST["name"]);
+            Auth::redirect("/admin/category");
         }
+
+        $this->view->setTitle('home');
+        $this->view->render('admin/category/create',[]);
 
         return true;
     }
 
     public function actionUpdate($id)
     {
-
-        $val=\application\models\Order::tableUpdate($id);
-
-        $_SESSION["updateID"]=$id;
-        $_POST["id"]=$id;
-        $this->view->setTitle('home');
-        $this->view->render('admin/category/update', ['id' => $id]);
-        if (!empty($_POST) && !empty($_POST["submit"])){
-            Order::tableUpdateInsert($_POST["edit"],$id);
-            Auth::goCategoryPage();
+        if (!Auth::checkLogged()){
+            $_SESSION["AdminLoginPage"]="Please Login";
+            Auth::redirect("/admin/login");
         }
+        if (!Auth::isAdmin()){
+            $_SESSION["AdminLoginPage"]="Sorry Your User Levels is not Admin";
+            Auth::redirect("/admin/login");
+        }
+
+        if (!empty($_POST) && !empty($_POST["submit"])){
+            Category::Update($_POST["edit"],$id);
+            Auth::redirect("/admin/category");
+        }
+        $val=Category::Select($id);
+
+        $this->view->setTitle('home');
+        $this->view->render('admin/category/update', ['id' => $id,$val]);
 
         return true;
     }
 
-    public function actionDelete($id)
+    public function actionDelete()
     {
 
-//        $db = \application\components\Db::getConnection();
-//
-//        $sql = $db->prepare("DELETE FROM `category` WHERE `id`='$id'");
-//        $sql->execute();
-//
-//        $this->view->setTitle('home');
-//        header("Location: /admin/category");
-//
-//        return true;
+        $DelId=$_POST["DeleteId"];
+
+        Category::Delete($DelId);
+
+        echo json_encode(1,200);
+
+        die;
+
     }
 }
